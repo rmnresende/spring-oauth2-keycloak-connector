@@ -1,6 +1,6 @@
 # spring-oauth2-keycloak-connector (Source code for Article published)
 
-Updated to Java 14 and Spring Boot 2.3
+**Updated to Java 14 and Spring Boot 2.3**
 
 
 Complete source code used to explain an article on Securing REST API using Keycloak and Spring Oauth2   
