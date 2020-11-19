@@ -48,8 +48,7 @@ hs_err_pid*
 /nbdist/
 /.nb-gradle/
 
-##############################
+
 ## Visual Studio Code
-##############################
 .vscode/
 .code-workspace
