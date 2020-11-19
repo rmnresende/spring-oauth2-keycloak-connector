@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.autoconfigure.security.oauth2.resource.JwtAccessTokenConverterConfigurer;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,8 +22,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 /**
  * JwtAccessTokenCustomizer is to read roles and user_name in access token.
  * <p>
- * This class assumes, that you have define a Protocol Mapper in Keycloack to map user property 'username' to a claim named 'user_name' in access
- * token
+ * This class assumes, that you have define a Protocol Mapper in Keycloack to
+ * map user property 'username' to a claim named 'user_name' in access token
  * </p>
  */
 public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implements JwtAccessTokenConverterConfigurer {
@@ -49,7 +49,8 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
   }
 
   /**
-   * Spring oauth2 expects roles under authorities element in tokenMap, but keycloak provides it under resource_access. Hence extractAuthentication
+   * Spring oauth2 expects roles under authorities element in tokenMap, but
+   * keycloak provides it under resource_access. Hence extractAuthentication
    * method is overriden to extract roles from resource_access.
    *
    * @return OAuth2Authentication with authorities for given application
@@ -64,11 +65,11 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
     OAuth2Authentication authentication = super.extractAuthentication(tokenMap);
     OAuth2Request oAuth2Request = authentication.getOAuth2Request();
 
-    OAuth2Request request =
-        new OAuth2Request(oAuth2Request.getRequestParameters(), oAuth2Request.getClientId(), authorities, true, oAuth2Request.getScope(),
-            audienceList, null, null, null);
+    OAuth2Request request = new OAuth2Request(oAuth2Request.getRequestParameters(), oAuth2Request.getClientId(),
+        authorities, true, oAuth2Request.getScope(), audienceList, null, null, null);
 
-    Authentication usernamePasswordAuthentication = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), "N/A", authorities);
+    Authentication usernamePasswordAuthentication = new UsernamePasswordAuthenticationToken(
+        authentication.getPrincipal(), "N/A", authorities);
     LOG.debug("End extractAuthentication");
     return new OAuth2Authentication(request, usernamePasswordAuthentication);
   }
@@ -77,13 +78,11 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
     LOG.debug("Begin extractRoles: jwt = {}", jwt);
     Set<String> rolesWithPrefix = new HashSet<>();
 
-    jwt.path(CLIENT_NAME_ELEMENT_IN_JWT)
-        .elements()
-        .forEachRemaining(e -> e.path(ROLE_ELEMENT_IN_JWT)
-            .elements()
-            .forEachRemaining(r -> rolesWithPrefix.add("ROLE_" + r.asText())));
+    jwt.path(CLIENT_NAME_ELEMENT_IN_JWT).elements().forEachRemaining(
+        e -> e.path(ROLE_ELEMENT_IN_JWT).elements().forEachRemaining(r -> rolesWithPrefix.add("ROLE_" + r.asText())));
 
-    final List<GrantedAuthority> authorityList = AuthorityUtils.createAuthorityList(rolesWithPrefix.toArray(new String[0]));
+    final List<GrantedAuthority> authorityList = AuthorityUtils
+        .createAuthorityList(rolesWithPrefix.toArray(new String[0]));
     LOG.debug("End extractRoles: roles = {}", authorityList);
     return authorityList;
   }
@@ -93,8 +92,7 @@ public class JwtAccessTokenCustomizer extends DefaultAccessTokenConverter implem
     if (jwt.has(CLIENT_NAME_ELEMENT_IN_JWT)) {
       JsonNode resourceAccessJsonNode = jwt.path(CLIENT_NAME_ELEMENT_IN_JWT);
       final Set<String> clientNames = new HashSet<>();
-      resourceAccessJsonNode.fieldNames()
-          .forEachRemaining(clientNames::add);
+      resourceAccessJsonNode.fieldNames().forEachRemaining(clientNames::add);
 
       LOG.debug("End extractClients: clients = {}", clientNames);
       return clientNames;
